@@ -29,8 +29,7 @@ if(current_url.indexOf('attempt.php')>0)
   
   let testId=parseInt(current_url.split('cmid=')[1]);
   
-  dbw.GetTestResult(testId).then(TestData=>{             
-    console.log(TestData)
+  dbw.GetTestResult(testId).then(TestData=>{                 
     SetAnswers(TestData);
   });
 }
@@ -269,8 +268,7 @@ function ReviewParse(TestData){
       }
     }
     TestData.Result.push(answer);    
-  });
-  console.log(TestData);
+  });  
   return TestData;
 }
 function ClearJson(s)

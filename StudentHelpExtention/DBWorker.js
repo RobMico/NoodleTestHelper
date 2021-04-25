@@ -14,8 +14,7 @@ class BackendWorker {
     
     //Получает ответы
     async GetTestResult(id)
-    {              
-        alert("GetTestResult")
+    {                      
         try{        
         var test=this.GetLocalSavedTest(id);          
         if(test)
@@ -24,7 +23,7 @@ class BackendWorker {
         }
         
         var TestGetUrl=localStorage.getItem('ServerUrl')+'gettestdata?TestId='+id;
-        console.log(TestGetUrl);
+        
         var result=await fetch(TestGetUrl)
         result=JSON.parse(await result.text());        
         var TestData={
@@ -88,7 +87,7 @@ class BackendWorker {
             localStorage.setItem('LastTest', jsonAnswers);
             localStorage.setItem('RecordedTest', '');
             var TestSendUrl=localStorage.getItem('ServerUrl')+'psottestdata';
-            //console.log(TestSendUrl);
+            
             var xhr = new XMLHttpRequest();            
             xhr.open("POST", TestSendUrl, true);
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");            
@@ -104,8 +103,7 @@ class BackendWorker {
                 });
                 var TestSendUrl=localStorage.getItem('ServerUrl')+'psottestdata';            
                 localStorage.setItem('RecordedTest', '');
-                
-                //console.log(TestSendUrl);
+                                
                 var xhr = new XMLHttpRequest();            
                 xhr.open("POST", TestSendUrl, true);
                 xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");            
@@ -130,8 +128,7 @@ class BackendWorker {
         }
         else{
             obj.Result.push(Test);
-        }        
-        console.log(obj);
+        }                
         localStorage.setItem('RecordedTest', ClearJson(JSON.stringify(obj)));
         }catch(ex){}
     }

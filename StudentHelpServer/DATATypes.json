@@ -1,0 +1,9 @@
+
+{
+    "LoginSendType":[
+        {"username":"TestData","password":"TestDATA"}
+    ],
+    "AnswersSendType":[
+        {"questiontext":"MyQuestion","answer":"MyAnswer","comment":"MyComment","rating":10,"testid":111}
+    ]
+}

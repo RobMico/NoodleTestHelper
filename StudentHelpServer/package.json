@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "pg": "^8.6.0"
+  },
+  "name": "studenthelpserver",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "development": {
+    "username": "qfpbnwkrtikzsw",
+    "password": "bb910981392571f3a255484e97216e78c252f1b4236b48b7f32730f6fe6bb8ec",
+    "database": "d4c4i2jckt6mpn",
+    "host": "localhost",
+    "dialect": "postgres",
+    "operatorsAliases": false
+  }
+}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      * {box-sizing: border-box;}
+      .container {
+        position: relative;
+        width: 300px;
+        margin: 0 auto;
+        background: #A3D0C3;
+      }
+      .myinput, .mybutton {
+        border: none;
+        outline: none;
+        background: white;
+      }
+      .myinput {
+        width: 100%;
+        height: 42px;
+        padding-left: 15px;
+        z-index: 0;
+      }
+      .mybutton {
+        height: 42px;
+        width: 42px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        cursor: pointer;
+        z-index: 1;
+      }
+
+    </style>    
+  </head>
+  <body>    
+    <div class="container">      
+      <input type="text" class="myinput" id="url" placeholder="server url">
+      <button id="changeButton" class="mybutton" >OK</button>
+    </div>    
+    <script src="popup.js" ></script>
+  </body>
+</html>

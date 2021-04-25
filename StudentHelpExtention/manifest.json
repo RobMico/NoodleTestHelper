@@ -1,0 +1,26 @@
+{
+    "manifest_version":2,
+    "name":"Students test helper",
+    "description":"Students test helper",
+    "version":"2.0.0",
+    "permissions": ["activeTab", "declarativeContent", "storage", "tabs", "https://elearn.nubip.edu.ua/*", "https://stormy-refuge-88605.herokuapp.com/*", "http://localhost/*"],
+    "icons":{"128":"icon_128.png"},
+    "background":{
+        "scripts":["background.js"]
+    },
+    "browser_action":{
+        "default_icon":"icon.png",        
+        "default_popup": "popup.html"
+
+    },
+    "options_page": "options.html",
+    "content_scripts": [{
+        "matches": [ "https://elearn.nubip.edu.ua/*"],
+        "run_at":"document_idle", 
+		"js": [
+            "DBWorker.js",
+            "content.js"
+        ]
+	}]
+    
+}

@@ -14,18 +14,20 @@ class BackendWorker {
     
     //Получает ответы
     async GetTestResult(id)
-    {                      
+    {
+        console.log("Receive test data");
         try{        
         var test=this.GetLocalSavedTest(id);          
         if(test)
-        {            
+        {
+            console.log("Here is data saved before");
             return test.Result;
         }
-        
+        console.log("Getting data from server");
         var TestGetUrl=localStorage.getItem('ServerUrl')+'gettestdata?TestId='+id;
-        
         var result=await fetch(TestGetUrl)
-        result=JSON.parse(await result.text());        
+        result=JSON.parse(await result.text()); 
+        console.log(result);
         var TestData={
             TestId:id,
             Result:[]
@@ -36,11 +38,11 @@ class BackendWorker {
         return TestData.Result;
         }catch(ex){}
     }
-    //Костыль
+
     ClearJson(s)
     {
         // preserve newlines, etc - use valid JSON
-        s = s.replaceAll(/\\n/g, "\\n")  
+        s = s.replaceAll(/\\n/g, "")  
         .replaceAll(/\\'/g, "\\'")
         .replaceAll(/\\"/g, '\\"')
         .replaceAll(/\\&/g, "\\&")
@@ -56,7 +58,7 @@ class BackendWorker {
     }
     //Шлет логин на сервер
     SendLogIn(login)
-    {        
+    {
         try{
             var log=localStorage.getItem('RecordedLogin');
 
@@ -77,37 +79,47 @@ class BackendWorker {
     //Шлёт ответы на сервер, 
     SendAnswers(jsonAnswers, id, rating)
     {        
+        console.log("check send data");
         if(jsonAnswers)
         {
             var lastTest=localStorage.getItem('LastTest');        
             if(lastTest==jsonAnswers)
             {
+                console.log("Data won't be sent")
                 return;
             }
             localStorage.setItem('LastTest', jsonAnswers);
             localStorage.setItem('RecordedTest', '');
             var TestSendUrl=localStorage.getItem('ServerUrl')+'psottestdata';
-            
+            console.log("review data will be sent");
             var xhr = new XMLHttpRequest();            
             xhr.open("POST", TestSendUrl, true);
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");            
             xhr.send(jsonAnswers);
+            console.log("data sent");
         }
         else{
             
-            var res=JSON.parse(localStorage.getItem('RecordedTest'));
+            var res;
+            try{            
+                res=JSON.parse(localStorage.getItem('RecordedTest'));
+            }catch{return;}
             if(res.TestId==id)
             {
                 res.Result.forEach(element => {
                     element.rating=rating;
                 });
+                res.Result = res.Result.filter(function(value, index, self) {        
+                    return self.findIndex(el=>{return el.questiontext==value.questiontext}) === index;
+                  });
                 var TestSendUrl=localStorage.getItem('ServerUrl')+'psottestdata';            
                 localStorage.setItem('RecordedTest', '');
-                                
+                console.log("recorded data will be sent");
                 var xhr = new XMLHttpRequest();            
                 xhr.open("POST", TestSendUrl, true);
                 xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");            
                 xhr.send( ClearJson(JSON.stringify(res.Result)));
+                console.log("recorded data was sent");
                 
             }
         }
@@ -116,19 +128,16 @@ class BackendWorker {
     //сохранение конкретного ответа к ответам теста
     RecordQuestionLocal(Test)
     {
+        console.log("recording current answer");
         try{        
         let obj= localStorage.getItem('RecordedTest')
         obj=JSON.parse(obj);
-        var res = obj.Result.find(Q=>{
-            return Q.questiontext==ClearJson(Test.questiontext);
-        });        
-        if(res)
-        {
-            res.answer=Test.answer;
-        }
-        else{
-            obj.Result.push(Test);
-        }                
+
+        obj.Result.push(Test);
+        obj.Result = obj.Result.filter(function(value, index, self) {        
+            return self.findIndex(el=>{return el.questiontext==value.questiontext}) === index;
+          });  
+        
         localStorage.setItem('RecordedTest', ClearJson(JSON.stringify(obj)));
         }catch(ex){}
     }

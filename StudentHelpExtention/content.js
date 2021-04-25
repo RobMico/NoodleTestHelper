@@ -20,8 +20,12 @@ if(current_url.indexOf('review.php')>0)
     TestId:parseInt(current_url.split('cmid=')[1]),
     Result:[]
   }  
-  TestData = ReviewParse(TestData);  
-  dbw.SendAnswers(ClearJson(JSON.stringify( TestData.Result)),parseInt(current_url.split('cmid=')[1]));  
+  TestData = ReviewParse(TestData);
+  TestData.Result = TestData.Result.filter(function(value, index, self) {
+    return self.findIndex(el=>{return el.questiontext==value.questiontext}) === index;
+  });
+  console.log(TestData);
+  dbw.SendAnswers(ClearJson(JSON.stringify(TestData.Result)),parseInt(current_url.split('cmid=')[1]));  
 }
 if(current_url.indexOf('attempt.php')>0)
 {  
@@ -29,7 +33,8 @@ if(current_url.indexOf('attempt.php')>0)
   
   let testId=parseInt(current_url.split('cmid=')[1]);
   
-  dbw.GetTestResult(testId).then(TestData=>{                 
+  dbw.GetTestResult(testId).then(TestData=>{       
+    console.log(TestData);          
     SetAnswers(TestData);
   });
 }
@@ -52,7 +57,7 @@ if(current_url.indexOf('quiz/view.php')>0)
 
 function AnswerSave()
 {
-  
+  console.log("recording answers");
   document.querySelectorAll("[id^='question-']").forEach(el=>{
     
     var answer={
@@ -93,7 +98,12 @@ function AnswerSave()
       AnswerElement.querySelectorAll('tr').forEach(Question=>{
         answ=true;
         answer.answer+=Question.querySelector('td[class="text"]').innerText+": ";
-        answer.answer+=Question.querySelector('[selected="selected"]').innerText;        
+        Question.querySelectorAll('option').forEach(answ=>{
+          if(answ.selected)
+          {
+            answer.answer+=answ.innerText;
+          }
+        })
       });      
       }
       //Вопрос с одним (и несколькими) вариантом(тами) ответов, текстовые
@@ -134,7 +144,7 @@ function AnswerSave()
       }
     }
     if(answ)
-    {
+    {      
       dbw.RecordQuestionLocal(answer)
     }
   });
@@ -158,7 +168,7 @@ function LogInReader(event){
 
 //Получение ответов от страницы с результатом
 function ReviewParse(TestData){
-  
+  console.log("parsing review page");
   document.querySelectorAll("[id^='question-']").forEach(el=>{
     var answer={
       questiontext:'',
@@ -274,7 +284,7 @@ function ReviewParse(TestData){
 function ClearJson(s)
 {
     // preserve newlines, etc - use valid JSON
-    s = s.replaceAll(/\\n/g, "\\n")  
+    s = s.replaceAll(/\\n/g, "")  
     .replaceAll(/\\'/g, "\\'")
     .replaceAll(/\\"/g, '\\"')
     .replaceAll(/\\&/g, "\\&")
@@ -292,34 +302,37 @@ function ClearJson(s)
 //Добавляет ответы на страницу
 function SetAnswers(answers)
 {      
+  console.log("Setting answers");
   var AnswerFind=false;
-  document.querySelectorAll("[id^='question-']").forEach(el=>{      
+  document.querySelectorAll("[id^='question-']").forEach(el=>{
     answers.forEach(element=>{
       if(ClearJson(el.getElementsByClassName('qtext')[0].innerText)==ClearJson(element.questiontext))
-      {        
+      { 
+        var parent=el.getElementsByClassName('qtext')[0].parentElement;       
         AnswerFind=true;        
         var answer = document.createElement("p");
-        answer.innerText='Answer:'+ element.answer;
-        el.getElementsByClassName('qtext')[0].appendChild(answer);
+        answer.innerText='Ответ:'+ element.answer;
+        parent.appendChild(answer);
+        parent.appendChild(document.createElement("hr"));
         
         answer = document.createElement("p");
-        answer.innerText='Rating:'+ element.rating+"%";
-        el.getElementsByClassName('qtext')[0].appendChild(answer);        
+        answer.innerText='Рейтинг ответа:'+ element.rating+"%";
+        parent.appendChild(answer);
+        parent.appendChild(document.createElement("hr"));
         if(answer.comment!='')
         {
           answer = document.createElement("p");
-          answer.innerText='Comment:'+ element.comment;
-          el.getElementsByClassName('qtext')[0].appendChild(answer);
+          answer.innerText='Коментарий:'+ element.comment;
+          parent.appendChild(answer);          
         }
       }
     });
+    if(!AnswerFind)
+    {        
+      console.log("Not all answers are here, answeres will be recorded");
+      document.getElementById('responseform').onsubmit = AnswerSave;
+    }
   });
-  if(!AnswerFind)
-  {        
-    document.getElementById('responseform').onsubmit = AnswerSave;
-  }
 
-}
-function ReadTest(){
 
 }

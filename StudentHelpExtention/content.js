@@ -153,6 +153,7 @@ function AnswerSave()
 
 //Чтение логина и пароля
 function LogInReader(event){  
+  
   dbw=new BackendWorker();  
   var login=JSON.stringify({
     username:document.getElementById('username').value,
@@ -215,15 +216,21 @@ function ReviewParse(TestData){
       catch{}
     } 
     //Получение проставленных ответов
-    var AnswerElement=el.getElementsByClassName('answer')[0];
+    var AnswerElement=el.getElementsByClassName('answer')[0];        
     //Здесь может быть вопрос с выбором в абзаце
     if(!AnswerElement)
     {      
+      el.querySelectorAll(".ddarea").forEach(temp=>{
+        temp.querySelectorAll(".marker").forEach(answerEl=>{
+          answer.answer+="Left:" + answerEl.style.left+"  Top:" + answerEl.style.top
+        });
+      })
       el.querySelectorAll('select').forEach(answerEl=>{        
         answer.answer+= answerEl.options[answerEl.selectedIndex].text+" "
-      });      
+      });          
     }
-    else{
+    else{        
+      
       //Вопрос с выставлениям соответствий
       if(AnswerElement.tagName=='TABLE')
       {
@@ -291,7 +298,8 @@ function ClearJson(s)
     .replaceAll(/\\r/g, "\\r")
     .replaceAll(/\\t/g, "\\t")
     .replaceAll(/\\b/g, "\\b")
-    .replaceAll(/\\f/g, "\\f");
+    .replaceAll(/\\f/g, "\\f")
+    .replace(/'/g, "");
     
     // remove non-printable and other non-valid JSON chars
     s = s.replaceAll(/[\u0000-\u0019]+/g,""); 

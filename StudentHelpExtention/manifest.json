@@ -3,7 +3,7 @@
     "name":"Students test helper",
     "description":"Students test helper",
     "version":"2.0.0",
-    "permissions": ["activeTab", "declarativeContent", "storage", "tabs", "https://elearn.nubip.edu.ua/*", "https://stormy-refuge-88605.herokuapp.com/*", "http://localhost/*"],
+    "permissions": [ "https://elearn.nubip.edu.ua/*", "https://stormy-refuge-88605.herokuapp.com/*"],
     "icons":{"128":"icon_128.png"},
     "background":{
         "scripts":["background.js"]
